@@ -7,6 +7,11 @@ import IDEPanel from "../components/IDEPanel";
 import HintPopup from "../components/HintPopup";
 import SuggestedProblemPopup from "../components/SuggestedProblemPopup";
 
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const [showTopicSelect, setShowTopicSelect] = useState(true);
@@ -57,11 +62,10 @@ public class Solution {
     setLoading(true);
     fetch("https://skillcrafter-backend.onrender.com/api/battle/initiate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify({
           topic 
         }),
-        credentials: "include",
       })
         .then(res => res.json())
         .then(data => {
@@ -93,7 +97,7 @@ public class Solution {
     setSolutionCode(code); 
     fetch("https://skillcrafter-backend.onrender.com/api/battle/run", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       body: JSON.stringify({
         code: code,
         problem: problemData.problem,
@@ -101,7 +105,6 @@ public class Solution {
         rlState,
         rlAction
       }),
-      credentials: "include", 
     })
       .then(res => res.json())
       .then(data => { 
@@ -132,13 +135,12 @@ public class Solution {
     setSolutionCode(code);
     fetch("https://skillcrafter-backend.onrender.com/api/battle/hint", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       body: JSON.stringify({
         problem: problemData.problem,
         code: code,
         language: selectedLanguage,
       }),
-      credentials: "include",
     })
       .then(res => res.json())
       .then(data => setHint(data.hint))
@@ -150,9 +152,10 @@ public class Solution {
     try {
       await fetch("https://skillcrafter-backend.onrender.com/api/auth/logout", {
         method: "POST",
-        credentials: "include",
+        headers: getAuthHeaders()
       });
     } catch (_) {}
+    localStorage.removeItem('token');
     navigate("/login");
   };
 

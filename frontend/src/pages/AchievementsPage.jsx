@@ -72,6 +72,11 @@ function AchievementCard({ ach }) {
   );
 }
 
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
 export default function AchievementsPage() {
 
   const [version, setVersion] = useState(null);
@@ -80,7 +85,7 @@ export default function AchievementsPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("https://skillcrafter-backend.onrender.com/api/turn", { credentials: "include" })
+    fetch("https://skillcrafter-backend.onrender.com/api/turn", { headers: getAuthHeaders() })
       .then(res => res.json())
       .then(data => {
         if (data) {
@@ -91,7 +96,7 @@ export default function AchievementsPage() {
   }, []);
 
   useEffect(() => {
-    fetch("https://skillcrafter-backend.onrender.com/api/achievements", { credentials: "include" })
+    fetch("https://skillcrafter-backend.onrender.com/api/achievements", { headers: getAuthHeaders() })
       .then(res => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);

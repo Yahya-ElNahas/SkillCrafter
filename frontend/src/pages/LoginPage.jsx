@@ -25,12 +25,12 @@ export default function LoginPage() {
     try {
       const res = await fetch("https://skillcrafter-backend.onrender.com/api/auth/login", {
         method: "POST",
-        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: identifier, password })
       });
       const body = await res.json();
       if (!res.ok) throw new Error(body.message || "Login failed");
+      localStorage.setItem('token', body.token);
       if(body.version == 3) nav("/dashboard");
       else nav("/app");
     } catch (e) {

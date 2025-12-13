@@ -16,6 +16,12 @@ import { Intro } from "../components/Intro";
 import StorylinePopup from "../components/StorylinePopup";
 
 
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
+
 export default function App() {
   const navigate = useNavigate();
   const transformRef = useRef(null);
@@ -219,7 +225,7 @@ public class Solution {
 
   // fetch current turn on mount
   useEffect(() => {
-    fetch("https://skillcrafter-backend.onrender.com/api/turn", { credentials: "include" })
+    fetch("https://skillcrafter-backend.onrender.com/api/turn", { headers: getAuthHeaders() })
       .then(res => res.json())
       .then(data => {
         // backend may return shape { currentTurn, isEnding } or { turn: { currentTurn, isEnding } }
@@ -242,8 +248,8 @@ public class Solution {
     const fetchData = async () => {
       try {
         const [provincesRes, armiesRes] = await Promise.all([
-          fetch("https://skillcrafter-backend.onrender.com/api/provinces", { credentials: "include" }),
-          fetch("https://skillcrafter-backend.onrender.com/api/armies/", { credentials: "include" })
+          fetch("https://skillcrafter-backend.onrender.com/api/provinces", { headers: getAuthHeaders() }),
+          fetch("https://skillcrafter-backend.onrender.com/api/armies/", { headers: getAuthHeaders() })
         ]);
         
         if (!provincesRes.ok) {
@@ -276,9 +282,8 @@ public class Solution {
     if (!selectedArmyId) return;
     fetch("https://skillcrafter-backend.onrender.com/api/armies/move", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       body: JSON.stringify({ divisionId: selectedArmyId, position: provinceId }),
-      credentials: "include",
     })
       .then(res => res.json())
       .then(data => {
@@ -323,7 +328,7 @@ public class Solution {
     setSolutionCode(code); // Save the current code to state
     fetch("https://skillcrafter-backend.onrender.com/api/battle/run", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       body: JSON.stringify({
         code: code,
         problem: battleData.problem,
@@ -335,7 +340,6 @@ public class Solution {
         rlState,
         rlAction
       }),
-      credentials: "include", 
     })
       .then(res => res.json())
       .then(data => { 
@@ -413,9 +417,8 @@ public class Solution {
       try {
         fetch("https://skillcrafter-backend.onrender.com/api/problem/byTopic", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", ...getAuthHeaders() },
           body: JSON.stringify({ topic }),
-          credentials: "include",
         })
         .then(res => res.json())
         .then(data => {
@@ -453,14 +456,13 @@ public class Solution {
       }
       fetch("https://skillcrafter-backend.onrender.com/api/battle/initiate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify({
           topic,
           attacker: pendingBattle.attacker,
           defender: pendingBattle.defender,
           position: pendingBattle.position 
         }),
-        credentials: "include",
       })
         .then(res => res.json())
         .then(data => {
@@ -499,14 +501,13 @@ public class Solution {
     }
     fetch("https://skillcrafter-backend.onrender.com/api/battle/initiate", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       body: JSON.stringify({
         problem,
         attacker: pendingBattle.attacker,
         defender: pendingBattle.defender,
         position: pendingBattle.position 
       }),
-      credentials: "include",
     })
       .then(res => res.json())
       .then(data => {
@@ -545,7 +546,7 @@ public class Solution {
     setSolutionCode(code); // Save the current code to state
     fetch("https://skillcrafter-backend.onrender.com/api/battle/hint", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       body: JSON.stringify({
         problem: battleData.problem,
         code: code,
@@ -553,7 +554,6 @@ public class Solution {
         defender,
         language: selectedLanguage,
       }),
-      credentials: "include",
     })
       .then(res => res.json())
       .then(data => setHint(data.hint))
@@ -569,7 +569,7 @@ public class Solution {
     setIsProcessingEnemyMove(true);
     fetch("https://skillcrafter-backend.onrender.com/api/turn/end", {
       method: "POST",
-      credentials: "include"
+      headers: getAuthHeaders()
     })
       .then(res => res.json())
       .then(data => {
@@ -610,7 +610,7 @@ public class Solution {
 
     fetch("https://skillcrafter-backend.onrender.com/api/performance", {
       method: "DELETE",
-      credentials: "include"
+      headers: getAuthHeaders()
     })
       .then(res => res.json())
       .then(() => {
@@ -624,9 +624,10 @@ public class Solution {
     try {
       await fetch("https://skillcrafter-backend.onrender.com/api/auth/logout", {
         method: "POST",
-        credentials: "include",
+        headers: getAuthHeaders()
       });
     } catch (_) {}
+    localStorage.removeItem('token');
     navigate("/login");
   };
 
@@ -790,8 +791,8 @@ public class Solution {
               const fetchData = async () => {
                 try {
                   const [provincesRes, armiesRes] = await Promise.all([
-                    fetch("https://skillcrafter-backend.onrender.com/api/provinces", { credentials: "include" }),
-                    fetch("https://skillcrafter-backend.onrender.com/api/armies/", { credentials: "include" })
+                    fetch("https://skillcrafter-backend.onrender.com/api/provinces", { headers: getAuthHeaders() }),
+                    fetch("https://skillcrafter-backend.onrender.com/api/armies/", { headers: getAuthHeaders() })
                   ]);
                   
                   if (!provincesRes.ok) {
