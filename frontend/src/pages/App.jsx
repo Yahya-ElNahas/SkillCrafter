@@ -1040,6 +1040,7 @@ public class Solution {
 
           {/* Map Panel */}
           <MapPanel
+            key={alliedArmies.length}
             transformRef={transformRef}
             provinces={provinces}
             alliedArmies={alliedArmies}
