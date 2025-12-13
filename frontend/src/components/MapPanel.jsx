@@ -75,15 +75,18 @@ export default function MapPanel({
 
   // Compute province coordinates once when provinces change
   useEffect(() => {
-    const centers = {};
-    const locations = {};
-    provinces.forEach(p => {
-      centers[p.id] = getProvinceCenterCoords(p.id);
-      locations[p.id] = getProvinceLocationCoords(p.id);
-    });
-    setProvinceCenters(centers);
-    setProvinceLocations(locations);
-    setIsLoaded(true);
+    if (!provinces.length) return;
+    setTimeout(() => {
+      const centers = {};
+      const locations = {};
+      provinces.forEach(p => {
+        centers[p.id] = getProvinceCenterCoords(p.id);
+        locations[p.id] = getProvinceLocationCoords(p.id);
+      });
+      setProvinceCenters(centers);
+      setProvinceLocations(locations);
+      setIsLoaded(true);
+    }, 1000); // Delay to allow SVG to load
   }, [provinces]);
 
   // Center camera on attacker when battle starts
