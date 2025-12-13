@@ -1,5 +1,5 @@
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { useEffect, useState, useRef, memo, lazy, Suspense } from "react";
+import { useEffect, useState, useRef, lazy, Suspense } from "react";
 import AlliedCity from "../assets/allied-city.svg?react";
 import EnemyCity from "../assets/enemy-city.svg?react";
 import AlliedInfantry from "../assets/allied-infantry.svg?react";
@@ -13,7 +13,7 @@ import BattleAnimation from "./BattleAnimation";
 
 const Map = lazy(() => import("../assets/map.svg?react"));
 
-export default memo(function MapPanel({
+export default function MapPanel({
   provinces,
   alliedArmies,
   enemyArmies,

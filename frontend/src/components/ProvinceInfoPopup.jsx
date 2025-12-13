@@ -84,7 +84,7 @@ export default function ProvinceInfoPopup({ province, show, onCreateUnit, showPr
       )}
 
       {province.name && (<div><b>Name:</b> {province.name}</div>)}
-      {(<div><b>Province ID:</b> {province.id}</div>)}
+      {/* {(<div><b>Province ID:</b> {province.id}</div>)} */}
       <div><b>Controller:</b> {province.controller}</div>
       <div><b>Type:</b> {province.type}</div>
     </div>
