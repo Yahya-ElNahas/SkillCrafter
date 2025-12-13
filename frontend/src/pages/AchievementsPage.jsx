@@ -85,7 +85,7 @@ export default function AchievementsPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("skillcrafter-backend-production-bc4b.up.railway.app/api/turn", { headers: getAuthHeaders() })
+    fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/turn", { headers: getAuthHeaders() })
       .then(res => res.json())
       .then(data => {
         if (data) {
@@ -96,7 +96,7 @@ export default function AchievementsPage() {
   }, []);
 
   useEffect(() => {
-    fetch("skillcrafter-backend-production-bc4b.up.railway.app/api/achievements", { headers: getAuthHeaders() })
+    fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/achievements", { headers: getAuthHeaders() })
       .then(res => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);

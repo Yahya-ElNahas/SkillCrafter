@@ -155,7 +155,7 @@ export default function MapPanel({
         return;
       }
       try {
-        const res = await fetch(`skillcrafter-backend-production-bc4b.up.railway.app/api/armies/adjacenciesOfUnit`, {
+        const res = await fetch(`https://skillcrafter-backend-production-bc4b.up.railway.app/api/armies/adjacenciesOfUnit`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ unitId: selectedArmyId }),
