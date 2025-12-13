@@ -55,7 +55,7 @@ public class Solution {
 
   const handleTopicSelect = (topic) => {
     setLoading(true);
-    fetch("http://localhost:5000/api/battle/initiate", {
+    fetch("https://skillcrafter-backend.onrender.com/api/battle/initiate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -91,7 +91,7 @@ public class Solution {
     }
     const code = getCode();
     setSolutionCode(code); 
-    fetch("http://localhost:5000/api/battle/run", {
+    fetch("https://skillcrafter-backend.onrender.com/api/battle/run", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -130,7 +130,7 @@ public class Solution {
     setHintLoading(true);
     const code = getCode();
     setSolutionCode(code);
-    fetch("http://localhost:5000/api/battle/hint", {
+    fetch("https://skillcrafter-backend.onrender.com/api/battle/hint", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -148,7 +148,7 @@ public class Solution {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:5000/api/auth/logout", {
+      await fetch("https://skillcrafter-backend.onrender.com/api/auth/logout", {
         method: "POST",
         credentials: "include",
       });

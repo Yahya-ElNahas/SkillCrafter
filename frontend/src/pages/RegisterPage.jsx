@@ -67,7 +67,7 @@ export default function RegisterPage() {
     }
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
+      const res = await fetch("https://skillcrafter-backend.onrender.com/api/auth/register", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -75,7 +75,7 @@ export default function RegisterPage() {
       });
       const body = await res.json();
       if (!res.ok) throw new Error(body.message || "Registration failed");
-      const res2 = await fetch("http://localhost:5000/api/auth/login", {
+      const res2 = await fetch("https://skillcrafter-backend.onrender.com/api/auth/login", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

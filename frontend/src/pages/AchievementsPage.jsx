@@ -80,7 +80,7 @@ export default function AchievementsPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/turn", { credentials: "include" })
+    fetch("https://skillcrafter-backend.onrender.com/api/turn", { credentials: "include" })
       .then(res => res.json())
       .then(data => {
         if (data) {
@@ -91,7 +91,7 @@ export default function AchievementsPage() {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/achievements", { credentials: "include" })
+    fetch("https://skillcrafter-backend.onrender.com/api/achievements", { credentials: "include" })
       .then(res => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
