@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import logo from '../../logo.svg';
 
 export default function LandingPage() {
   const [primaryHover, setPrimaryHover] = useState(false);
@@ -279,7 +280,7 @@ export default function LandingPage() {
 
           <div style={heroVisual}>
             <div style={visualCard}>
-              <img src="../logo.svg" alt="SkillCrafter Logo" style={visualIcon} />
+              <img src={logo} alt="SkillCrafter Logo" style={visualIcon} />
             </div>
           </div>
         </div>
