@@ -23,7 +23,7 @@ export default function LoginPage() {
     setErr(null);
     setLoading(true);
     try {
-      const res = await fetch("https://skillcrafter-backend.onrender.com/api/auth/login", {
+      const res = await fetch("skillcrafer-backend-production.up.railway.app/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: identifier, password })

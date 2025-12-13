@@ -155,7 +155,7 @@ export default function MapPanel({
         return;
       }
       try {
-        const res = await fetch(`https://skillcrafter-backend.onrender.com/api/armies/adjacenciesOfUnit`, {
+        const res = await fetch(`skillcrafer-backend-production.up.railway.app/api/armies/adjacenciesOfUnit`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ unitId: selectedArmyId }),

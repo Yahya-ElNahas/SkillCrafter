@@ -60,7 +60,7 @@ public class Solution {
 
   const handleTopicSelect = (topic) => {
     setLoading(true);
-    fetch("https://skillcrafter-backend.onrender.com/api/battle/initiate", {
+    fetch("skillcrafer-backend-production.up.railway.app/api/battle/initiate", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify({
@@ -95,7 +95,7 @@ public class Solution {
     }
     const code = getCode();
     setSolutionCode(code); 
-    fetch("https://skillcrafter-backend.onrender.com/api/battle/run", {
+    fetch("skillcrafer-backend-production.up.railway.app/api/battle/run", {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       body: JSON.stringify({
@@ -133,7 +133,7 @@ public class Solution {
     setHintLoading(true);
     const code = getCode();
     setSolutionCode(code);
-    fetch("https://skillcrafter-backend.onrender.com/api/battle/hint", {
+    fetch("skillcrafer-backend-production.up.railway.app/api/battle/hint", {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       body: JSON.stringify({
@@ -150,7 +150,7 @@ public class Solution {
 
   const handleLogout = async () => {
     try {
-      await fetch("https://skillcrafter-backend.onrender.com/api/auth/logout", {
+      await fetch("skillcrafer-backend-production.up.railway.app/api/auth/logout", {
         method: "POST",
         headers: getAuthHeaders()
       });
