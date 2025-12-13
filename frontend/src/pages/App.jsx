@@ -234,6 +234,37 @@ public class Solution {
           setIsTurnEnding(Boolean(data.turn.isEnding));
           setVersion(data.turn.version);
           console.log("Fetched turn:", data.turn);
+          // Now fetch provinces and armies after turn is loaded
+          const fetchData = async () => {
+            try {
+              const [provincesRes, armiesRes] = await Promise.all([
+                fetch("https://skillcrafter-backend.onrender.com/api/provinces", { headers: getAuthHeaders() }),
+                fetch("https://skillcrafter-backend.onrender.com/api/armies/", { headers: getAuthHeaders() })
+              ]);
+              
+              if (!provincesRes.ok) {
+                throw new Error(`Provinces API failed: ${provincesRes.status} ${provincesRes.statusText}`);
+              }
+              if (!armiesRes.ok) {
+                throw new Error(`Armies API failed: ${armiesRes.status} ${armiesRes.statusText}`);
+              }
+              
+              const provincesData = await provincesRes.json();
+              const armiesData = await armiesRes.json();
+              console.log(provincesData, armiesData);
+              setProvinces(provincesData.map(p => ({...p})));
+              const allied = armiesData.filter((army) => army.faction === "allied");
+              const enemy = armiesData.filter((army) => army.faction === "enemy");
+              setAlliedArmies(allied);
+              setEnemyArmies(enemy);
+              setIsLoading(false);
+            } catch (err) {
+              console.error("Failed to fetch data:", err);
+              setError(`Failed to load game data. Please ensure the backend server is running on port 5000.\n\nError: ${err.message}`);
+              setIsLoading(false);
+            }
+          };
+          fetchData();
         }
       })
       .catch(err => console.error("Failed to fetch turn:", err));
@@ -242,39 +273,6 @@ public class Solution {
   // Add loading state
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // Fetch provinces and armies with loading
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [provincesRes, armiesRes] = await Promise.all([
-          fetch("https://skillcrafter-backend.onrender.com/api/provinces", { headers: getAuthHeaders() }),
-          fetch("https://skillcrafter-backend.onrender.com/api/armies/", { headers: getAuthHeaders() })
-        ]);
-        
-        if (!provincesRes.ok) {
-          throw new Error(`Provinces API failed: ${provincesRes.status} ${provincesRes.statusText}`);
-        }
-        if (!armiesRes.ok) {
-          throw new Error(`Armies API failed: ${armiesRes.status} ${armiesRes.statusText}`);
-        }
-        
-        const provincesData = await provincesRes.json();
-        const armiesData = await armiesRes.json();
-        setProvinces(provincesData.map(p => ({...p})));
-        const allied = armiesData.filter((army) => army.faction === "allied");
-        const enemy = armiesData.filter((army) => army.faction === "enemy");
-        setAlliedArmies(allied);
-        setEnemyArmies(enemy);
-        setIsLoading(false);
-      } catch (err) {
-        console.error("Failed to fetch data:", err);
-        setError(`Failed to load game data. Please ensure the backend server is running on port 5000.\n\nError: ${err.message}`);
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
 
   const handleProvinceMove = (provinceId, event) => {
     if (showIDE) return;
