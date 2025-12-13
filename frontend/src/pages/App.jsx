@@ -172,7 +172,7 @@ public class Solution {
   // Add this useEffect to trigger the intro
   useEffect(() => {
     if (currentTurn === 1 && !isTurnEnding && alliedArmies.length > 0 && !alliedArmies.some(a => a.movement <= 0)) {
-      setShowIntro(true);
+      setTimeout(() => setShowIntro(true), 500);
     }
   }, [currentTurn, alliedArmies, isTurnEnding]);
 
