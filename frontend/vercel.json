@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}</content>
+<parameter name="filePath">f:\VS Code Projects\SkillCrafter\frontend\vercel.json
