@@ -225,7 +225,7 @@ public class Solution {
 
   // fetch current turn on mount
   useEffect(() => {
-    fetch("skillcrafer-backend-production.up.railway.app/api/turn", { headers: getAuthHeaders() })
+    fetch("skillcrafter-backend-production-bc4b.up.railway.app/api/turn", { headers: getAuthHeaders() })
       .then(res => res.json())
       .then(data => {
         // backend may return shape { currentTurn, isEnding } or { turn: { currentTurn, isEnding } }
@@ -238,8 +238,8 @@ public class Solution {
           const fetchData = async () => {
             try {
               const [provincesRes, armiesRes] = await Promise.all([
-                fetch("skillcrafer-backend-production.up.railway.app/api/provinces", { headers: getAuthHeaders() }),
-                fetch("skillcrafer-backend-production.up.railway.app/api/armies/", { headers: getAuthHeaders() })
+                fetch("skillcrafter-backend-production-bc4b.up.railway.app/api/provinces", { headers: getAuthHeaders() }),
+                fetch("skillcrafter-backend-production-bc4b.up.railway.app/api/armies/", { headers: getAuthHeaders() })
               ]);
               
               if (!provincesRes.ok) {
@@ -278,7 +278,7 @@ public class Solution {
     if (showIDE) return;
     if (event) event.preventDefault();
     if (!selectedArmyId) return;
-    fetch("skillcrafer-backend-production.up.railway.app/api/armies/move", {
+    fetch("skillcrafter-backend-production-bc4b.up.railway.app/api/armies/move", {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       body: JSON.stringify({ divisionId: selectedArmyId, position: provinceId }),
@@ -324,7 +324,7 @@ public class Solution {
     setHint(null);
     const code = getCode();
     setSolutionCode(code); // Save the current code to state
-    fetch("skillcrafer-backend-production.up.railway.app/api/battle/run", {
+    fetch("skillcrafter-backend-production-bc4b.up.railway.app/api/battle/run", {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       body: JSON.stringify({
@@ -413,7 +413,7 @@ public class Solution {
   const handleTopicSelect = (topic) => {
     if(version == 2) {
       try {
-        fetch("skillcrafer-backend-production.up.railway.app/api/problem/byTopic", {
+        fetch("skillcrafter-backend-production-bc4b.up.railway.app/api/problem/byTopic", {
           method: "POST",
           headers: { "Content-Type": "application/json", ...getAuthHeaders() },
           body: JSON.stringify({ topic }),
@@ -452,7 +452,7 @@ public class Solution {
           }
         } catch (_) {}
       }
-      fetch("skillcrafer-backend-production.up.railway.app/api/battle/initiate", {
+      fetch("skillcrafter-backend-production-bc4b.up.railway.app/api/battle/initiate", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify({
@@ -497,7 +497,7 @@ public class Solution {
         }
       } catch (_) {}
     }
-    fetch("skillcrafer-backend-production.up.railway.app/api/battle/initiate", {
+    fetch("skillcrafter-backend-production-bc4b.up.railway.app/api/battle/initiate", {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       body: JSON.stringify({
@@ -542,7 +542,7 @@ public class Solution {
     setHintLoading(true);
     const code = getCode();
     setSolutionCode(code); // Save the current code to state
-    fetch("skillcrafer-backend-production.up.railway.app/api/battle/hint", {
+    fetch("skillcrafter-backend-production-bc4b.up.railway.app/api/battle/hint", {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       body: JSON.stringify({
@@ -565,7 +565,7 @@ public class Solution {
     setSelectedArmyId(null);
     setSelectedProvinceId(null);
     setIsProcessingEnemyMove(true);
-    fetch("skillcrafer-backend-production.up.railway.app/api/turn/end", {
+    fetch("skillcrafter-backend-production-bc4b.up.railway.app/api/turn/end", {
       method: "POST",
       headers: getAuthHeaders()
     })
@@ -606,7 +606,7 @@ public class Solution {
     setPendingBattle(null);
     setShowTopicSelect(false);
 
-    fetch("skillcrafer-backend-production.up.railway.app/api/performance", {
+    fetch("skillcrafter-backend-production-bc4b.up.railway.app/api/performance", {
       method: "DELETE",
       headers: getAuthHeaders()
     })
@@ -620,7 +620,7 @@ public class Solution {
 
   const handleLogout = async () => {
     try {
-      await fetch("skillcrafer-backend-production.up.railway.app/api/auth/logout", {
+      await fetch("skillcrafter-backend-production-bc4b.up.railway.app/api/auth/logout", {
         method: "POST",
         headers: getAuthHeaders()
       });
@@ -789,8 +789,8 @@ public class Solution {
               const fetchData = async () => {
                 try {
                   const [provincesRes, armiesRes] = await Promise.all([
-                    fetch("skillcrafer-backend-production.up.railway.app/api/provinces", { headers: getAuthHeaders() }),
-                    fetch("skillcrafer-backend-production.up.railway.app/api/armies/", { headers: getAuthHeaders() })
+                    fetch("skillcrafter-backend-production-bc4b.up.railway.app/api/provinces", { headers: getAuthHeaders() }),
+                    fetch("skillcrafter-backend-production-bc4b.up.railway.app/api/armies/", { headers: getAuthHeaders() })
                   ]);
                   
                   if (!provincesRes.ok) {

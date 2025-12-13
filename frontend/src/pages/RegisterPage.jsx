@@ -67,14 +67,14 @@ export default function RegisterPage() {
     }
     setLoading(true);
     try {
-      const res = await fetch("skillcrafer-backend-production.up.railway.app/api/auth/register", {
+      const res = await fetch("skillcrafter-backend-production-bc4b.up.railway.app/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password, gender, version })
       });
       const body = await res.json();
       if (!res.ok) throw new Error(body.message || "Registration failed");
-      const res2 = await fetch("skillcrafer-backend-production.up.railway.app/api/auth/login", {
+      const res2 = await fetch("skillcrafter-backend-production-bc4b.up.railway.app/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password })
