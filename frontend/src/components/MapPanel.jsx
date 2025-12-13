@@ -1,5 +1,5 @@
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { useEffect, useState, useRef, lazy, Suspense } from "react";
+import { useEffect, useState, useRef } from "react";
 import AlliedCity from "../assets/allied-city.svg?react";
 import EnemyCity from "../assets/enemy-city.svg?react";
 import AlliedInfantry from "../assets/allied-infantry.svg?react";
@@ -11,7 +11,7 @@ import EnemyBarracks from "../assets/enemy-barracks.svg?react";
 import Factory from "../assets/factory.svg?react";
 import BattleAnimation from "./BattleAnimation";
 
-const Map = lazy(() => import("../assets/map.svg?react"));
+import Map from "../assets/map.svg?react";
 
 export default function MapPanel({
   provinces,
@@ -410,11 +410,9 @@ export default function MapPanel({
         wrapperClass="w-screen h-screen"
         contentClass="w-full h-full"
       >
-        <Suspense fallback={<div>Loading map...</div>}>
-          <div ref={mapRef} className="w-full h-full">
-            <Map className="w-full h-full pointer-events-auto" />
-          </div>
-        </Suspense>
+        <div ref={mapRef} className="w-full h-full">
+          <Map className="w-full h-full pointer-events-auto" />
+        </div>
 
         {/* Render city icons and names at province centers and barracks and factories */}
         {provinces
