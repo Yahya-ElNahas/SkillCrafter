@@ -251,7 +251,7 @@ export default function LandingPage() {
       <section style={heroSection}>
         <div style={heroContainer} className="hero-container">
           <div style={heroContent}>
-            <div style={badge}>🎯 Interactive Learning Platform</div>
+            <div style={badge}>🎯 Adaptive Learning Environment</div>
             <h1 style={titleStyle} className="hero-title">SkillCrafter — Forge Your Coding Skills</h1>
 
             <div style={ctaRow} className="cta-row">
