@@ -81,6 +81,7 @@ export default function RegisterPage() {
       });
       const body2 = await res2.json();
       if (!res2.ok) throw new Error(body2.message || "Login failed");
+      localStorage.setItem('token', body2.token);
       if(version == 3) nav("/dashboard");
       else nav("/app");
 
