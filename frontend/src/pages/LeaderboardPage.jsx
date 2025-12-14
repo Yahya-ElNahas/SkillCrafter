@@ -72,7 +72,7 @@ export default function LeaderboardPage() {
         fontSize: 18
       }}>
         Error: {error}
-        <Link to={version != 3 ? "/app" : "/dashboard"} style={{ color: "#cfe9a8", marginTop: 20 }}>Back to {version != 3 ? "Map" : "Dashboard"}</Link>
+        <Link to={version == 1 ? "/app" : "/dashboard"} style={{ color: "#cfe9a8", marginTop: 20 }}>Back to {version == 1 ? "Map" : "Dashboard"}</Link>
       </div>
     );
   }

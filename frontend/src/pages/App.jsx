@@ -88,6 +88,7 @@ export default function App() {
   const [rlAction, setRlAction] = useState(null);
 
   const [showSuggestedPopup, setShowSuggestedPopup] = useState(false);
+  const [showMasteredPopup, setShowMasteredPopup] = useState(false);
   const [showHowTo, setShowHowTo] = useState(false);
 
   // current turn number
@@ -464,6 +465,11 @@ public class Solution {
       })
         .then(res => res.json())
         .then(data => {
+          if (data.mastered) {
+            setShowMasteredPopup(true);
+            setTimeout(() => setShowMasteredPopup(false), 3500);
+            return;
+          }
           setBattleData(data);
           setAttacker(data.attacker);
           setDefender(data.defender);
@@ -1321,6 +1327,27 @@ public class Solution {
 
           {/* Hint Popup */}
           <HintPopup hint={hint} onClose={() => setHint(null)} show={showIDE && hint} />
+
+          {/* Mastered Topic Popup */}
+          {showMasteredPopup && (
+            <div style={{
+              position: "fixed",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              background: "linear-gradient(135deg, #4CAF50, #45a049)",
+              color: "#fff",
+              padding: "20px 30px",
+              borderRadius: 12,
+              fontSize: 18,
+              fontWeight: "bold",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+              zIndex: 1000000,
+              textAlign: "center"
+            }}>
+              🎉 You have mastered this topic! Choose another one.
+            </div>
+          )}
 
           {/* Suggested Problem Popup */}
           <SuggestedProblemPopup show={showSuggestedPopup} />

@@ -27,6 +27,7 @@ export default function Dashboard() {
   const [runResult, setRunResult] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
   const [showSuggestedPopup, setShowSuggestedPopup] = useState(false);
+  const [showMasteredPopup, setShowMasteredPopup] = useState(false);
   const [hint, setHint] = useState(null);
   const [hintLoading, setHintLoading] = useState(false);
 
@@ -69,6 +70,11 @@ public class Solution {
       })
         .then(res => res.json())
         .then(data => {
+          if (data.mastered) {
+            setShowMasteredPopup(true);
+            setTimeout(() => setShowMasteredPopup(false), 3500);
+            return;
+          }
           setProblemData(data);
           setRlState(data.rlState);
           setRlAction(data.rlAction);
@@ -280,11 +286,12 @@ public class Solution {
           </div>
 
           <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(5, 1fr)",
+            display: "flex",
+            justifyContent: "center",
             gap: 16,
             width: "100%",
-            maxWidth: "1000px"
+            maxWidth: "600px",
+            flexWrap: "wrap"
           }}>
             {availableTopics.map(topic => (
               <button
@@ -292,6 +299,8 @@ public class Solution {
                 onClick={() => handleTopicSelect(topic)}
                 className="topic-button"
                 style={{
+                  flex: "1 1 200px",
+                  maxWidth: "250px",
                   padding: "20px 12px",
                   borderRadius: 12,
                   border: "2px solid rgba(255,255,255,0.15)",
@@ -400,6 +409,27 @@ public class Solution {
 
         {/* Hint Popup */}
         <HintPopup hint={hint} onClose={() => setHint(null)} show={showIDE && hint} version={3} isFullScreen={true} />
+
+        {/* Mastered Topic Popup */}
+        {showMasteredPopup && (
+          <div style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            background: "linear-gradient(135deg, #4CAF50, #45a049)",
+            color: "#fff",
+            padding: "20px 30px",
+            borderRadius: 12,
+            fontSize: 18,
+            fontWeight: "bold",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+            zIndex: 1000000,
+            textAlign: "center"
+          }}>
+            🎉 You have mastered this topic! Choose another one.
+          </div>
+        )}
 
         {/* Suggested Problem Popup */}
         <SuggestedProblemPopup show={showSuggestedPopup} />
