@@ -8,6 +8,7 @@ import ArmyInfoPopup from "../components/ArmyInfoPopup";
 import ProvinceInfoPopup from "../components/ProvinceInfoPopup";
 import HintPopup from "../components/HintPopup";
 import SuggestedProblemPopup from "../components/SuggestedProblemPopup";
+import VictoryPopup from "../components/VictoryPopup";
 import BattleLoadingModal from "../components/BattleLoadingModal";
 import battleSoundUrl from "../assets/battle.mp3";
 import AlliedInfantry from "../assets/allied-infantry.svg?react";
@@ -88,6 +89,8 @@ export default function App() {
   const [rlAction, setRlAction] = useState(null);
 
   const [showSuggestedPopup, setShowSuggestedPopup] = useState(false);
+  const [showVictoryPopup, setShowVictoryPopup] = useState(false);
+  const [victoryCityName, setVictoryCityName] = useState(null);
   const [showMasteredPopup, setShowMasteredPopup] = useState(false);
   const [showHowTo, setShowHowTo] = useState(false);
 
@@ -315,6 +318,14 @@ public class Solution {
         if (data.provinces) {
           setProvinces(data.provinces.map(p => ({...p})));
         }
+        if (data.capturedCity) {
+          setVictoryCityName(data.capturedCity);
+          setShowVictoryPopup(true);
+          setTimeout(() => {
+            setShowVictoryPopup(false);
+            setVictoryCityName(null);
+          }, 3500);
+        }
         setSelectedArmyId(null);
       });
   };
@@ -404,6 +415,14 @@ public class Solution {
           }
           if (data.provinces) {
             setProvinces(data.provinces.map(p => ({...p})));
+          }
+          if (data.capturedCity) {
+            setVictoryCityName(data.capturedCity);
+            setShowVictoryPopup(true);
+            setTimeout(() => {
+              setShowVictoryPopup(false);
+              setVictoryCityName(null);
+            }, 3500);
           }
         }
       })
@@ -1351,6 +1370,7 @@ public class Solution {
 
           {/* Suggested Problem Popup */}
           <SuggestedProblemPopup show={showSuggestedPopup} />
+          <VictoryPopup show={showVictoryPopup} cityName={victoryCityName} />
 
           {/* Capture Tutorial Popup */}
           {showCaptureTutorial && !showTopicSelect && !battleLoading && !showIDE && (
