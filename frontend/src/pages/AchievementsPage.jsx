@@ -151,8 +151,21 @@ export default function AchievementsPage() {
 
   return (
     <div style={{ minHeight: "100dvh", background: "#0b1208", color: "#e6f6d7", position: "relative" }}>
+      <style>
+        {`
+          .back-button:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+            background: linear-gradient(135deg, #2f3d2a 0%, #1f2d24 100%);
+          }
+          .back-button:active {
+            transform: translateY(0px) scale(0.98);
+            transition: all 0.1s ease;
+          }
+        `}
+      </style>
       {/* Back to Map Button */}
-      <Link to={version != 3 ? "/app" : "/dashboard"} style={{
+      <Link to={version != 3 ? "/app" : "/dashboard"} className="back-button" style={{
         position: "absolute",
         top: 20,
         left: 16,
@@ -163,7 +176,8 @@ export default function AchievementsPage() {
         padding: "10px 14px",
         textDecoration: "none",
         fontWeight: 800,
-        zIndex: 10
+        zIndex: 10,
+        transition: "all 0.2s ease"
       }}>Back to {version != 3 ? "Map" : "Dashboard"}</Link>
       <div style={{ height: 60 }} />
       <div style={{ maxWidth: 1100, margin: "24px auto", padding: "0 16px" }}>

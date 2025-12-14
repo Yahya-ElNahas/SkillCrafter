@@ -187,6 +187,15 @@ public class Solution {
             box-shadow: 0 12px 28px rgba(0,0,0,0.7) !important;
             background: linear-gradient(135deg,#7a9f5a,#6a8a4d) !important;
           }
+          .top-bar-link:hover {
+            transform: translateY(-2px) scale(1.02) !important;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.4) !important;
+            background: linear-gradient(135deg, #1a2416 0%, #0f1a12 100%) !important;
+          }
+          .top-bar-link:active {
+            transform: translateY(0px) scale(0.98) !important;
+            transition: all 0.1s ease !important;
+          }
         `}
       </style>
       {/* Subtle overlay for depth */}
@@ -222,13 +231,15 @@ public class Solution {
       >
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <div style={{ fontWeight: 900, letterSpacing: 0.6, color: "#fff7d9" }}>SkillCrafter</div>
-          <Link to="/achievements" style={{
+          <Link to="/achievements" className="top-bar-link" style={{
             color: "#cfe9a8",
             textDecoration: "none",
             padding: "6px 10px",
             borderRadius: 8,
             border: "1px solid rgba(255,255,255,0.06)",
             background: "#0b1208",
+            transition: "all 0.2s ease",
+            fontWeight: 700
           }}>Achievements</Link>
           <Link to="/leaderboard" className="top-bar-link" style={{
             color: "#cfe9a8",
