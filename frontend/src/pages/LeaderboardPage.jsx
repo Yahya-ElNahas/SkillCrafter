@@ -7,9 +7,21 @@ const getAuthHeaders = () => {
 };
 
 export default function LeaderboardPage() {
+  const [version, setVersion] = useState(null);
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/turn", { headers: getAuthHeaders() })
+      .then(res => res.json())
+      .then(data => {
+        if (data) {
+          setVersion(data.turn.version);
+        }
+      })
+      .catch(err => console.error("Failed to fetch turn:", err));
+  }, []);
 
   useEffect(() => {
     fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/achievements/leaderboard", { headers: getAuthHeaders() })
@@ -60,7 +72,7 @@ export default function LeaderboardPage() {
         fontSize: 18
       }}>
         Error: {error}
-        <Link to="/" style={{ color: "#cfe9a8", marginTop: 20 }}>Back to Game</Link>
+        <Link to={version != 3 ? "/app" : "/dashboard"} style={{ color: "#cfe9a8", marginTop: 20 }}>Back to {version != 3 ? "Map" : "Dashboard"}</Link>
       </div>
     );
   }
@@ -71,20 +83,25 @@ export default function LeaderboardPage() {
       background: "linear-gradient(180deg, #0b1208 0%, #0f1a12 25%, #16241a 50%, #1a2e20 75%, #0f1a12 100%)",
       color: "#e6f6d7",
       padding: "20px",
-      fontFamily: "Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial"
+      fontFamily: "Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial",
+      position: "relative"
     }}>
+      <Link to={version != 3 ? "/app" : "/dashboard"} style={{
+        position: "absolute",
+        top: 20,
+        left: 16,
+        background: "#1f2d24",
+        color: "#e6f6d7",
+        border: "1px solid rgba(255,255,255,0.08)",
+        borderRadius: 8,
+        padding: "10px 14px",
+        textDecoration: "none",
+        fontWeight: 800,
+        zIndex: 10
+      }}>Back to {version != 3 ? "Map" : "Dashboard"}</Link>
+      <div style={{ height: 60 }} />
       <div style={{ maxWidth: 800, margin: "0 auto" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 30 }}>
-          <Link to="/" style={{
-            color: "#cfe9a8",
-            textDecoration: "none",
-            padding: "8px 12px",
-            borderRadius: 8,
-            border: "1px solid rgba(255,255,255,0.06)",
-            background: "#0b1208",
-            transition: "all 0.2s ease",
-            fontWeight: 700
-          }}>← Back to Game</Link>
           <h1 style={{ margin: 0, fontSize: 28, fontWeight: 900 }}>Leaderboard</h1>
         </div>
 
