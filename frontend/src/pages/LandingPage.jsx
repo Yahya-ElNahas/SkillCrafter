@@ -285,6 +285,47 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Credits Section */}
+      <section style={{
+        padding: "60px 20px",
+        textAlign: "center",
+        background: "linear-gradient(180deg, rgba(15, 25, 18, 0.8) 0%, rgba(11, 18, 8, 0.9) 100%)",
+        borderTop: "1px solid rgba(255,255,255,0.05)",
+        marginTop: "40px"
+      }}>
+        <div style={{
+          maxWidth: "800px",
+          margin: "0 auto",
+          padding: "0 20px"
+        }}>
+          <div style={{
+            fontSize: "18px",
+            fontWeight: "600",
+            color: "#e6f6d7",
+            marginBottom: "12px",
+            letterSpacing: "0.5px"
+          }}>
+            Developed by <span style={{
+              background: "linear-gradient(135deg, #4CAF50, #45a049)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              fontWeight: "700"
+            }}>Yahya El Nahas</span>
+          </div>
+          <div style={{
+            fontSize: "16px",
+            fontWeight: "500",
+            color: "#dfe7c9",
+            opacity: 0.9,
+            lineHeight: "1.5"
+          }}>
+            Supervised by <span style={{
+              color: "#cfe9a8",
+              fontWeight: "600"
+            }}>Prof. Slim Abdennadher, Dr. Caroline Sabty, Dr. Alia El Bolock</span>
+          </div>
+        </div>
+      </section>
     </div>
-  );
-}
