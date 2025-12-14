@@ -7,6 +7,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import App from "./pages/App";
 import AchievementsPage from "./pages/AchievementsPage";
+import LeaderboardPage from "./pages/LeaderboardPage";
 import Dashboard from "./pages/Dashboard";
 
 function AppRouter() {
@@ -18,6 +19,7 @@ function AppRouter() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/app" element={<App />} />
         <Route path="/achievements" element={<AchievementsPage />} />
+        <Route path="/leaderboard" element={<LeaderboardPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </BrowserRouter>

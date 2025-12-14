@@ -896,6 +896,16 @@ public class Solution {
                 transition: "all 0.2s ease",
                 fontWeight: 700
               }}>Achievements</Link>
+              <Link to="/leaderboard" className="top-bar-link" style={{
+                color: "#cfe9a8",
+                textDecoration: "none",
+                padding: "6px 10px",
+                borderRadius: 8,
+                border: "1px solid rgba(255,255,255,0.06)",
+                background: "#0b1208",
+                transition: "all 0.2s ease",
+                fontWeight: 700
+              }}>Leaderboard</Link>
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
