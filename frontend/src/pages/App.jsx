@@ -15,6 +15,7 @@ import AlliedInfantry from "../assets/allied-infantry.svg?react";
 import AlliedArmor from "../assets/allied-armor.svg?react";
 import { Intro } from "../components/Intro";
 import StorylinePopup from "../components/StorylinePopup";
+import { useMusic } from "../components/MusicContext";
 
 
 const getAuthHeaders = () => {
@@ -30,6 +31,8 @@ export default function App() {
   const battleAudioRef = useRef(null);
   const VIEWPORT_WIDTH = 1024;   // <-- replace with your real values or import/use state
   const VIEWPORT_HEIGHT = 768;
+
+  const { musicPaused, toggleMusic, stopMusic } = useMusic();
 
   // ensure audio is stopped on unmount
   useEffect(() => {
@@ -90,11 +93,18 @@ export default function App() {
 
   const [showSuggestedPopup, setShowSuggestedPopup] = useState(false);
   const [showVictoryPopup, setShowVictoryPopup] = useState(false);
-  const [victoryCityName, setVictoryCityName] = useState(null);
+  const [victoryCityName, setVictoryCityName] = useState("");
   const [showMasteredPopup, setShowMasteredPopup] = useState(false);
   const [showHowTo, setShowHowTo] = useState(false);
+  const [showCreateUnitError, setShowCreateUnitError] = useState(false);
 
-  // current turn number
+  // Auto-hide create unit error after 3 seconds
+  useEffect(() => {
+    if (showCreateUnitError) {
+      const timer = setTimeout(() => setShowCreateUnitError(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showCreateUnitError]);
   const [currentTurn, setCurrentTurn] = useState(null);
   // whether backend marked the turn as "ending" (enemy's turn in progress / paused)
   const [isTurnEnding, setIsTurnEnding] = useState(false);
@@ -160,7 +170,7 @@ import java.io.*;
 import java.util.*;
 
 public class Solution {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         // Write your solution here:
         
@@ -229,7 +239,7 @@ public class Solution {
 
   // fetch current turn on mount
   useEffect(() => {
-    fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/turn", { headers: getAuthHeaders() })
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/turn`, { headers: getAuthHeaders() })
       .then(res => res.json())
       .then(data => {
         // backend may return shape { currentTurn, isEnding } or { turn: { currentTurn, isEnding } }
@@ -242,8 +252,8 @@ public class Solution {
           const fetchData = async () => {
             try {
               const [provincesRes, armiesRes] = await Promise.all([
-                fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/provinces", { headers: getAuthHeaders() }),
-                fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/armies/", { headers: getAuthHeaders() })
+                fetch(`${import.meta.env.VITE_BACKEND_URL}/api/provinces`, { headers: getAuthHeaders() }),
+                fetch(`${import.meta.env.VITE_BACKEND_URL}/api/armies/`, { headers: getAuthHeaders() })
               ]);
               
               if (!provincesRes.ok) {
@@ -282,7 +292,7 @@ public class Solution {
     if (showIDE) return;
     if (event) event.preventDefault();
     if (!selectedArmyId) return;
-    fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/armies/move", {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/armies/move`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       body: JSON.stringify({ divisionId: selectedArmyId, position: provinceId }),
@@ -318,13 +328,13 @@ public class Solution {
         if (data.provinces) {
           setProvinces(data.provinces.map(p => ({...p})));
         }
-        if (data.capturedCity) {
+        if (data.capturedCity && !data.surrendered && !data.suggestedProblem) {
           setVictoryCityName(data.capturedCity);
           setShowVictoryPopup(true);
           setTimeout(() => {
             setShowVictoryPopup(false);
             setVictoryCityName(null);
-          }, 3500);
+          }, 3000);
         }
         setSelectedArmyId(null);
       });
@@ -336,7 +346,7 @@ public class Solution {
     setHint(null);
     const code = getCode();
     setSolutionCode(code); // Save the current code to state
-    fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/battle/run", {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/battle/run`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       body: JSON.stringify({
@@ -389,17 +399,17 @@ public class Solution {
           if (data.nextState) {
             setRlState(data.nextState);
           }
-          // stop battle audio when running / finishing the attempt
-          try {
-            if (battleAudioRef.current) {
-              battleAudioRef.current.pause();
-              battleAudioRef.current.currentTime = 0;
-              battleAudioRef.current = null;
-            }
-          } catch (_) {}
           if(data.passed) {
             setAttacker(null);
             setDefender(null);
+            // stop battle audio when battle is won
+            try {
+              if (battleAudioRef.current) {
+                battleAudioRef.current.pause();
+                battleAudioRef.current.currentTime = 0;
+                battleAudioRef.current = null;
+              }
+            } catch (_) {}
           } else {
             if (battleAudioRef.current) {
               battleAudioRef.current.play().catch(() => {});
@@ -422,7 +432,7 @@ public class Solution {
             setTimeout(() => {
               setShowVictoryPopup(false);
               setVictoryCityName(null);
-            }, 3500);
+            }, 3000);
           }
         }
       })
@@ -433,7 +443,7 @@ public class Solution {
   const handleTopicSelect = (topic) => {
     if(version == 2) {
       try {
-        fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/problem/byTopic", {
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/problem/byTopic`, {
           method: "POST",
           headers: { "Content-Type": "application/json", ...getAuthHeaders() },
           body: JSON.stringify({ topic }),
@@ -462,7 +472,7 @@ public class Solution {
           if (!battleAudioRef.current) {
             const a = new Audio(battleSoundUrl);
             a.loop = true;
-            a.volume = 0.003; // low volume
+            a.volume = 0.02; // low volume
             // start playback (this call should be allowed because this handler runs on a user gesture)
             a.play().catch(() => {});
             battleAudioRef.current = a;
@@ -472,7 +482,7 @@ public class Solution {
           }
         } catch (_) {}
       }
-      fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/battle/initiate", {
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/battle/initiate`, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify({
@@ -514,7 +524,7 @@ public class Solution {
         if (!battleAudioRef.current) {
           const a = new Audio(battleSoundUrl);
           a.loop = true;
-          a.volume = 0.003;
+          a.volume = 0.05;
           a.play().catch(() => {});
           battleAudioRef.current = a;
         } else {
@@ -522,7 +532,7 @@ public class Solution {
         }
       } catch (_) {}
     }
-    fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/battle/initiate", {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/battle/initiate`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       body: JSON.stringify({
@@ -552,6 +562,12 @@ public class Solution {
   };
 
   const handleCreateUnitClick = (provinceId) => {
+    // Check if there is any unit in this province
+    const hasUnit = [...alliedArmies, ...enemyArmies].some(unit => unit.position === provinceId);
+    if (hasUnit) {
+      setShowCreateUnitError(true);
+      return;
+    }
     // Prepare a pendingBattle-like object that carries the position so when a
     // topic is selected we will initiate the 'create unit' flow on the server.
     setPendingBattle({ attacker: null, defender: null, position: provinceId });
@@ -567,7 +583,7 @@ public class Solution {
     setHintLoading(true);
     const code = getCode();
     setSolutionCode(code); // Save the current code to state
-    fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/battle/hint", {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/battle/hint`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       body: JSON.stringify({
@@ -590,7 +606,7 @@ public class Solution {
     setSelectedArmyId(null);
     setSelectedProvinceId(null);
     setIsProcessingEnemyMove(true);
-    fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/turn/end", {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/turn/end`, {
       method: "POST",
       headers: getAuthHeaders()
     })
@@ -631,7 +647,7 @@ public class Solution {
     setPendingBattle(null);
     setShowTopicSelect(false);
 
-    fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/performance", {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/performance`, {
       method: "DELETE",
       headers: getAuthHeaders()
     })
@@ -645,12 +661,13 @@ public class Solution {
 
   const handleLogout = async () => {
     try {
-      await fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/auth/logout", {
+      await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/logout`, {
         method: "POST",
         headers: getAuthHeaders()
       });
     } catch (_) {}
     localStorage.removeItem('token');
+    stopMusic();
     navigate("/login");
   };
 
@@ -814,8 +831,8 @@ public class Solution {
               const fetchData = async () => {
                 try {
                   const [provincesRes, armiesRes] = await Promise.all([
-                    fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/provinces", { headers: getAuthHeaders() }),
-                    fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/armies/", { headers: getAuthHeaders() })
+                    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/provinces`, { headers: getAuthHeaders() }),
+                    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/armies/`, { headers: getAuthHeaders() })
                   ]);
                   
                   if (!provincesRes.ok) {
@@ -907,6 +924,28 @@ public class Solution {
                   box-shadow: 0 4px 14px rgba(0,0,0,0.5) !important;
                   background: linear-gradient(135deg, #4c6c3b 0%, #3c5c2b 100%) !important;
                 }
+
+                @keyframes finishButtonHover {
+                  0% { transform: translateY(0) scale(1); }
+                  50% { transform: translateY(-2px) scale(1.05); }
+                  100% { transform: translateY(-2px) scale(1.05); }
+                }
+
+                @keyframes finishShimmer {
+                  0% { left: -100%; }
+                  100% { left: 100%; }
+                }
+
+                .finish-button:hover {
+                  transform: translateY(-2px) scale(1.05);
+                  box-shadow: 0 8px 25px rgba(255, 107, 53, 0.6), 0 0 20px rgba(255, 107, 53, 0.3);
+                  background: linear-gradient(135deg, #ff8535 0%, #ff9f1e 100%);
+                  animation: finishButtonHover 0.3s ease forwards;
+                }
+
+                .finish-button:hover .shimmer {
+                  animation: finishShimmer 0.5s ease;
+                }
               `}
             </style>
             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
@@ -934,25 +973,8 @@ public class Solution {
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              {/* <button
-                onClick={handleClearPerformance}
-                disabled={isRunning}
-                style={{
-                  background: "#7a2b2b",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 8,
-                  padding: "10px 14px",
-                  fontWeight: 800,
-                  cursor: isRunning ? "wait" : "pointer",
-                  boxShadow: "0 2px 8px #0008"
-                }}
-                title="Clear performance data (DELETE /api/performance)"
-              >
-                Clear Performance
-              </button> */}
               <button
-                onClick={handleLogout}
+                onClick={toggleMusic}
                 className="top-bar-button"
                 style={{
                   background: "#1f2d24",
@@ -962,11 +984,54 @@ public class Solution {
                   padding: "10px 14px",
                   fontWeight: 800,
                   cursor: "pointer",
-                  marginLeft: 4,
                   transition: "all 0.2s ease"
                 }}
               >
-                Logout
+                {musicPaused ? "▶️ Play Music" : "⏸️ Pause Music"}
+              </button>
+              <button
+                onClick={() => {
+                  window.open('https://docs.google.com/forms/d/e/1FAIpQLSehGSpTM484xHcALbyUjERDfcHYvhaYVmhqFziVjr-zpYlBNw/viewform?usp=publish-editor', '_blank');
+                  handleLogout();
+                }}
+                className="finish-button"
+                style={{
+                  background: "linear-gradient(135deg, #ff6b35 0%, #f7931e 100%)",
+                  color: "#ffffff",
+                  border: "2px solid #ff4500",
+                  borderRadius: 8,
+                  padding: "12px 20px",
+                  fontWeight: 900,
+                  fontSize: 16,
+                  cursor: "pointer",
+                  marginLeft: 4,
+                  transition: "all 0.3s ease",
+                  boxShadow: "0 4px 15px rgba(255, 107, 53, 0.4)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                  position: "relative",
+                  overflow: "hidden"
+                }}
+              >
+                <span style={{
+                  position: "relative",
+                  zIndex: 2,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px"
+                }}>
+                  Finish
+                </span>
+                <div style={{
+                  position: "absolute",
+                  top: 0,
+                  left: "-100%",
+                  width: "100%",
+                  height: "100%",
+                  background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)",
+                  transition: "left 0.5s ease",
+                }}
+                className="shimmer"></div>
               </button>
             </div>
             {/* Centered End Turn + Turn label */}
@@ -1108,14 +1173,14 @@ public class Solution {
           />
 
           {/* Move instruction popup */}
-          {selectedArmyId && !showIDE && !showTopicSelect && !battleLoading && !isProcessingEnemyMove && !showProblemList && (
+          {(selectedArmyId || showCreateUnitError) && !showIDE && !showTopicSelect && !battleLoading && !isProcessingEnemyMove && !showProblemList && (
             <div style={{
               position: "fixed",
               top: isTurnEnding ? 110 : 70,
               left: "50%",
               transform: "translateX(-50%)",
-              background: selectedArmyIsAllied ? "#122017": "#2b1212",
-              color: selectedArmyIsAllied ? "#bde7b0": "#ee9090",
+              background: showCreateUnitError ? "#7a2b2b" : (selectedArmyIsAllied ? "#122017": "#2b1212"),
+              color: showCreateUnitError ? "#fff" : (selectedArmyIsAllied ? "#bde7b0": "#ee9090"),
               padding: "6px 10px",
               borderRadius: 8,
               fontWeight: "bold",
@@ -1125,7 +1190,7 @@ public class Solution {
               animation: "gentleFlash 1.5s infinite",
             }}>
               <style>{`@keyframes gentleFlash {0%, 100% {opacity: 1;} 50% {opacity: 0.6;}}`}</style>
-              {selectedArmyIsAllied ? alliedArmies.find(a => a._id === selectedArmyId).movement > 0 ? !isTurnEnding ? `Right click on a highlighted province to move` : `Cannot move while turn is ending` : `This unit does not have enough movement points to move` : `AI unit can move to the highlighted provinces`}
+              {showCreateUnitError ? "Cannot create unit on a non-empty province" : (selectedArmyIsAllied ? alliedArmies.find(a => a._id === selectedArmyId).movement > 0 ? !isTurnEnding ? `Right click on a highlighted province to move` : `Cannot move while turn is ending` : `This unit does not have enough movement points to move` : `AI unit can move to the highlighted provinces`)}
             </div>
           )}
           {isTurnEnding && !isProcessingEnemyMove && !showIDE && !showTopicSelect && !battleLoading && !showProblemList && (
@@ -1301,7 +1366,7 @@ public class Solution {
               <div style={{
                 position: "fixed",
                 top: 40,
-                left: 20,
+                left: 5,
                 zIndex: 200000,
               }}>
                 <ProblemPanel

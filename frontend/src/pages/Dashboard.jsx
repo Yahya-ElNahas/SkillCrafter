@@ -6,6 +6,7 @@ import ProblemPanel from "../components/ProblemPanel";
 import IDEPanel from "../components/IDEPanel";
 import HintPopup from "../components/HintPopup";
 import SuggestedProblemPopup from "../components/SuggestedProblemPopup";
+import { useMusic } from "../components/MusicContext";
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
@@ -14,6 +15,7 @@ const getAuthHeaders = () => {
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { stopMusic } = useMusic();
   const [showTopicSelect, setShowTopicSelect] = useState(true);
   const [availableTopics, setAvailableTopics] = useState([
     "strings", "loops"
@@ -61,7 +63,7 @@ public class Solution {
 
   const handleTopicSelect = (topic) => {
     setLoading(true);
-    fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/battle/initiate", {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/battle/initiate`, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify({
@@ -101,7 +103,7 @@ public class Solution {
     }
     const code = getCode();
     setSolutionCode(code); 
-    fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/battle/run", {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/battle/run`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       body: JSON.stringify({
@@ -139,7 +141,7 @@ public class Solution {
     setHintLoading(true);
     const code = getCode();
     setSolutionCode(code);
-    fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/battle/hint", {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/battle/hint`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       body: JSON.stringify({
@@ -156,12 +158,13 @@ public class Solution {
 
   const handleLogout = async () => {
     try {
-      await fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/auth/logout", {
+      await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/logout`, {
         method: "POST",
         headers: getAuthHeaders()
       });
     } catch (_) {}
     localStorage.removeItem('token');
+    stopMusic();
     navigate("/login");
   };
 
@@ -229,45 +232,96 @@ public class Solution {
           boxShadow: "0 6px 18px rgba(0,0,0,0.35)",
         }}
       >
+        <style>
+          {`
+            .top-bar-link:hover {
+              transform: translateY(-1px) !important;
+              box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+              background: linear-gradient(135deg, #1a2416 0%, #0f1a12 100%) !important;
+            }
+            .top-bar-button:hover:not(:disabled) {
+              transform: translateY(-1px) !important;
+              box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
+              background: linear-gradient(135deg, #2f3d2a 0%, #1f2d24 100%) !important;
+            }
+            .end-turn-button:hover:not(:disabled) {
+              transform: translateY(-1px) !important;
+              box-shadow: 0 4px 14px rgba(0,0,0,0.5) !important;
+              background: linear-gradient(135deg, #4c6c3b 0%, #3c5c2b 100%) !important;
+            }
+
+            @keyframes finishButtonHover {
+              0% { transform: translateY(0) scale(1); }
+              50% { transform: translateY(-2px) scale(1.05); }
+              100% { transform: translateY(-2px) scale(1.05); }
+            }
+
+            @keyframes finishShimmer {
+              0% { left: -100%; }
+              100% { left: 100%; }
+            }
+
+            .finish-button:hover {
+              transform: translateY(-2px) scale(1.05);
+              box-shadow: 0 8px 25px rgba(255, 107, 53, 0.6), 0 0 20px rgba(255, 107, 53, 0.3);
+              background: linear-gradient(135deg, #ff8535 0%, #ff9f1e 100%);
+              animation: finishButtonHover 0.3s ease forwards;
+            }
+
+            .finish-button:hover .shimmer {
+              animation: finishShimmer 0.5s ease;
+            }
+          `}
+        </style>
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <div style={{ fontWeight: 900, letterSpacing: 0.6, color: "#fff7d9" }}>SkillCrafter</div>
-          <Link to="/achievements" className="top-bar-link" style={{
-            color: "#cfe9a8",
-            textDecoration: "none",
-            padding: "6px 10px",
-            borderRadius: 8,
-            border: "1px solid rgba(255,255,255,0.06)",
-            background: "#0b1208",
-            transition: "all 0.2s ease",
-            fontWeight: 700
-          }}>Achievements</Link>
-          <Link to="/leaderboard" className="top-bar-link" style={{
-            color: "#cfe9a8",
-            textDecoration: "none",
-            padding: "6px 10px",
-            borderRadius: 8,
-            border: "1px solid rgba(255,255,255,0.06)",
-            background: "#0b1208",
-            transition: "all 0.2s ease",
-            fontWeight: 700
-          }}>Leaderboard</Link>
+          
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <button
-            onClick={handleLogout}
+            onClick={() => {
+              window.open('https://docs.google.com/forms/d/e/1FAIpQLScXVM7d-C2S0k5KlFb-l96Mzkyc4je4_Q9vvRmOq-HekJlVUA/viewform?usp=publish-editor ', '_blank');
+              handleLogout();
+            }}
+            className="finish-button"
             style={{
-              background: "#1f2d24",
-              color: "#e6f6d7",
-              border: "1px solid rgba(255,255,255,0.08)",
+              background: "linear-gradient(135deg, #ff6b35 0%, #f7931e 100%)",
+              color: "#ffffff",
+              border: "2px solid #ff4500",
               borderRadius: 8,
-              padding: "10px 14px",
-              fontWeight: 800,
+              padding: "12px 20px",
+              fontWeight: 900,
+              fontSize: 16,
               cursor: "pointer",
-              marginLeft: 4
+              marginLeft: 4,
+              transition: "all 0.3s ease",
+              boxShadow: "0 4px 15px rgba(255, 107, 53, 0.4)",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+              position: "relative",
+              overflow: "hidden"
             }}
           >
-            Logout
+            <span style={{
+              position: "relative",
+              zIndex: 2,
+              display: "flex",
+              alignItems: "center",
+              gap: "8px"
+            }}>
+              Finish
+            </span>
+            <div style={{
+              position: "absolute",
+              top: 0,
+              left: "-100%",
+              width: "100%",
+              height: "100%",
+              background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)",
+              transition: "left 0.5s ease",
+            }}
+            className="shimmer"></div>
           </button>
         </div>
       </div>

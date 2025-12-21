@@ -13,7 +13,7 @@ export default function LeaderboardPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/turn", { headers: getAuthHeaders() })
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/turn`, { headers: getAuthHeaders() })
       .then(res => res.json())
       .then(data => {
         if (data) {
@@ -24,7 +24,7 @@ export default function LeaderboardPage() {
   }, []);
 
   useEffect(() => {
-    fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/achievements/leaderboard", { headers: getAuthHeaders() })
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/achievements/leaderboard`, { headers: getAuthHeaders() })
       .then(res => res.json())
       .then(data => {
         if (data.users) {

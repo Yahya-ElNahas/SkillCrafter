@@ -9,19 +9,22 @@ import App from "./pages/App";
 import AchievementsPage from "./pages/AchievementsPage";
 import LeaderboardPage from "./pages/LeaderboardPage";
 import Dashboard from "./pages/Dashboard";
+import { MusicProvider } from "./components/MusicContext";
 
 function AppRouter() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/app" element={<App />} />
-        <Route path="/achievements" element={<AchievementsPage />} />
-        <Route path="/leaderboard" element={<LeaderboardPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
+      <MusicProvider>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/app" element={<App />} />
+          <Route path="/achievements" element={<AchievementsPage />} />
+          <Route path="/leaderboard" element={<LeaderboardPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </MusicProvider>
     </BrowserRouter>
   );
 }

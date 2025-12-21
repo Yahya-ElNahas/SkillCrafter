@@ -3,20 +3,13 @@ import { useNavigate, Link } from "react-router-dom";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
   const [gender, setGender] = useState("");
-  const [version, setVersion] = useState(1);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isGenderDropdownOpen, setIsGenderDropdownOpen] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
   const [scrollY, setScrollY] = useState(0);
-
-  const versionOptions = [
-    { value: 1, label: "Gamified" },
-    { value: 3, label: "Non-Gamified" }
-  ];
+  const [showFormModal, setShowFormModal] = useState(false);
+  const [userVersion, setUserVersion] = useState(null);
 
   const genderOptions = [
     { value: "male", label: "Male" },
@@ -61,30 +54,23 @@ export default function RegisterPage() {
   async function submit(e) {
     e.preventDefault();
     setErr(null);
-    if (password !== confirm) {
-      setErr("Passwords do not match");
-      return;
-    }
     setLoading(true);
     try {
-      const res = await fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/auth/register", {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password, gender, version })
+        body: JSON.stringify({ username, password, gender })
       });
       const body = await res.json();
       if (!res.ok) throw new Error(body.message || "Registration failed");
-      const res2 = await fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
-      });
-      const body2 = await res2.json();
-      if (!res2.ok) throw new Error(body2.message || "Login failed");
-      localStorage.setItem('token', body2.token);
-      if(version == 3) nav("/dashboard");
-      else nav("/app");
-
+      
+      // Store the assigned version, open form, and show modal
+      setUserVersion(body.user.version);
+      const formUrl = body.user.version === 3 
+        ? "https://docs.google.com/forms/d/e/1FAIpQLScc1gc0y54pA7yVPCIaEwXHGUUwfVjaERzpALiKMowlYvgbLQ/viewform?usp=publish-editor"
+        : "https://docs.google.com/forms/d/e/1FAIpQLSdusm6zA9Wxwox9-vuC2d7S2kJl9iIOglHFe-Lfe2Gj0dPr9g/viewform?usp=dialog";
+      window.open(formUrl, '_blank');
+      setShowFormModal(true);
     } catch (e) {
       console.log(e);
       setErr(e.message || "Registration failed");
@@ -92,6 +78,30 @@ export default function RegisterPage() {
       setLoading(false);
     }
   }
+
+  const handleFormConfirmation = async () => {
+    try {
+      // Now perform login after form confirmation
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.message || "Login failed");
+      localStorage.setItem('token', body.token);
+      localStorage.setItem('justSignedUp', 'true');
+      window.dispatchEvent(new Event('tokenSet'));
+      
+      setShowFormModal(false);
+      if(userVersion === 3) nav("/dashboard");
+      else nav("/app");
+    } catch (e) {
+      console.log(e);
+      setErr(e.message || "Login failed");
+      setShowFormModal(false); // Close modal on error
+    }
+  };
 
   const pageStyle = {
     minHeight: "100vh",
@@ -398,23 +408,6 @@ export default function RegisterPage() {
             </div>
 
             <div style={inputGroup}>
-              <label style={inputLabel(focusedField === 'email', email)}>
-                Email
-              </label>
-              <input
-                style={input(focusedField === 'email')}
-                placeholder=""
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onFocus={() => setFocusedField('email')}
-                onBlur={() => setFocusedField(null)}
-                required
-                autoComplete="email"
-              />
-            </div>
-
-            <div style={inputGroup}>
               <label style={inputLabel(focusedField === 'password', password)}>
                 Password
               </label>
@@ -425,23 +418,6 @@ export default function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onFocus={() => setFocusedField('password')}
-                onBlur={() => setFocusedField(null)}
-                required
-                autoComplete="new-password"
-              />
-            </div>
-
-            <div style={inputGroup}>
-              <label style={inputLabel(focusedField === 'confirm', confirm)}>
-                Confirm Password
-              </label>
-              <input
-                style={input(focusedField === 'confirm')}
-                placeholder=""
-                type="password"
-                value={confirm}
-                onChange={(e) => setConfirm(e.target.value)}
-                onFocus={() => setFocusedField('confirm')}
                 onBlur={() => setFocusedField(null)}
                 required
                 autoComplete="new-password"
@@ -501,59 +477,6 @@ export default function RegisterPage() {
               )}
             </div>
 
-            {/* Hidden select for form submission */}
-            <select
-              style={{ display: "none" }}
-              value={version}
-              onChange={(e) => setVersion(e.target.value)}
-              required
-            >
-              <option value={1}>Gamified Adaptive Personalized</option>
-              <option value={2}>Gamified</option>
-              <option value={3}>Adaptive Personalized</option>
-            </select>
-
-            {/* Custom dropdown */}
-            <div ref={dropdownRef} style={{ position: "relative", marginBottom: 20 }}>
-              <div
-                style={selectStyle(isDropdownOpen)}
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              >
-                <span style={{ fontSize: 12, color: "#bfe9a8", position: "absolute", top: 6, left: 14 }}>
-                  Version
-                </span>
-                <span style={{ marginTop: 6, display: "block" }}>
-                  {versionOptions.find(opt => opt.value === version)?.label}
-                </span>
-                <span
-                  style={{
-                    ...dropdownArrow,
-                    transform: isDropdownOpen ? "translateY(-50%) rotate(180deg)" : "translateY(-50%) rotate(0deg)"
-                  }}
-                >
-                  ▼
-                </span>
-              </div>
-              {isDropdownOpen && (
-                <div style={dropdownMenu}>
-                  {versionOptions.map(option => (
-                    <div
-                      key={option.value}
-                      style={dropdownItem}
-                      onMouseEnter={(e) => e.target.style.background = "rgba(138, 155, 90, 0.1)"}
-                      onMouseLeave={(e) => e.target.style.background = "transparent"}
-                      onClick={() => {
-                        setVersion(option.value);
-                        setIsDropdownOpen(false);
-                      }}
-                    >
-                      {option.label}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
             <button
               style={primaryBtn(btnHover, btnActive)}
               type="submit"
@@ -595,6 +518,97 @@ export default function RegisterPage() {
           </form>
         </div>
       </div>
+
+      {/* Form Submission Modal */}
+      {showFormModal && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(0,0,0,0.8)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 10000,
+          backdropFilter: "blur(10px)"
+        }}>
+          <div style={{
+            background: "linear-gradient(135deg, rgba(54, 75, 42, 0.95) 0%, rgba(43, 61, 32, 0.9) 100%)",
+            borderRadius: 20,
+            padding: 32,
+            maxWidth: 500,
+            width: "90%",
+            boxShadow: "0 32px 80px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1)",
+            border: "2px solid rgba(138, 155, 90, 0.2)",
+            textAlign: "center"
+          }}>
+            <div style={{
+              width: 80,
+              height: 80,
+              borderRadius: "50%",
+              background: "linear-gradient(135deg, #8a9b5a, #6a8440)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto 20px",
+              fontSize: 36
+            }}>
+              📋
+            </div>
+            
+            <h3 style={{
+              color: "#fff7d9",
+              fontSize: 24,
+              fontWeight: 800,
+              margin: "0 0 16px 0",
+              textShadow: "0 2px 8px rgba(0,0,0,0.6)"
+            }}>
+              Complete Your Registration
+            </h3>
+            
+            <p style={{
+              color: "#cfe9a8",
+              fontSize: 16,
+              lineHeight: 1.5,
+              margin: "0 0 24px 0"
+            }}>
+              The survey form has opened in a new window. Please complete it and then click the button below to enter the game.
+            </p>
+
+            <button
+              onClick={handleFormConfirmation}
+              style={{
+                background: "linear-gradient(135deg, #ff6b35, #f7931e)",
+                color: "#ffffff",
+                border: "2px solid #ff4500",
+                borderRadius: 12,
+                padding: "16px 32px",
+                fontWeight: 800,
+                fontSize: 18,
+                cursor: "pointer",
+                boxShadow: "0 8px 24px rgba(255, 107, 53, 0.4)",
+                transition: "all 0.3s ease",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px"
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "translateY(-2px)";
+                e.target.style.boxShadow = "0 12px 32px rgba(255, 107, 53, 0.6)";
+                e.target.style.background = "linear-gradient(135deg, #ff8535, #ff9f1e)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow = "0 8px 24px rgba(255, 107, 53, 0.4)";
+                e.target.style.background = "linear-gradient(135deg, #ff6b35, #f7931e)";
+              }}
+            >
+              ✅ I've Completed the Survey
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

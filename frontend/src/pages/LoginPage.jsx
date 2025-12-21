@@ -20,10 +20,10 @@ export default function LoginPage() {
 
   async function submit(e) {
     e.preventDefault();
-    setErr(null);
+    setErr(null); 
     setLoading(true);
     try {
-      const res = await fetch("https://skillcrafter-backend-production-bc4b.up.railway.app/api/auth/login", {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: identifier, password })
@@ -270,7 +270,7 @@ export default function LoginPage() {
           <form onSubmit={submit}>
             <div style={inputGroup}>
               <label style={inputLabel(focusedField === 'identifier', identifier)}>
-                Username or Email
+                Username
               </label>
               <input
                 style={input(focusedField === 'identifier')}

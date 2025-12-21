@@ -18,8 +18,8 @@ export default function IDEPanel({
     <div
       style={{
         position: isFullScreen ? "absolute" : "fixed",
-        top: isFullScreen ? 0 : 70,
-        right: isFullScreen ? 0 : 20,
+        top: isFullScreen ? 0 : 65,
+        right: isFullScreen ? 0 : 2,
         width: isFullScreen ? "100%" : "650px",
         height: isFullScreen ? "100%" : "calc(100vh - 80px)",
         background: "#001E04",

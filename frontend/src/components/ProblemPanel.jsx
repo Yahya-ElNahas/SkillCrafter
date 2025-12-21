@@ -257,7 +257,7 @@ export default function ProblemPanel({
                 letterSpacing: 1.5,
                 textTransform: "uppercase",
               }}>
-                {version !== 3 ? "Victory" : "Solution Passed"}
+                Life is Good
               </div>
               <div style={{
                 fontSize: 16,
@@ -475,6 +475,11 @@ export default function ProblemPanel({
                   </div>
                 ))}
               </div>
+              {!runResult.passed && (
+                <div style={{ marginTop: 12, color: "#ff9b9b", fontStyle: "italic" }}>
+                  Note: There are hidden test cases that may have failed.
+                </div>
+              )}
             </div>
           )}
           {/* fallback: legacy single output/expected display */}
@@ -522,6 +527,18 @@ export default function ProblemPanel({
             <b>Description:</b>
             <div style={{ marginTop: 4 }}>{problem.description}</div>
           </div>
+          <div style={{
+            marginBottom: 12,
+            color: "#ffcc80",
+            fontSize: 14,
+            fontStyle: "italic",
+            background: "rgba(255, 193, 7, 0.1)",
+            padding: "8px 12px",
+            borderRadius: 6,
+            border: "1px solid rgba(255, 193, 7, 0.3)"
+          }}>
+            <b>⚠️</b> Solve without using built-in functions or external sources.
+          </div>
           <div style={{ marginBottom: 12, color: "#b4e06c", fontSize: 15 }}>
             <b>Difficulty:</b> <span style={{ color: "#ffe97a" }}>{problem.difficulty}</span>
             <br />
@@ -554,6 +571,23 @@ export default function ProblemPanel({
                 </div>
               ))}
             </div>}
+          </div>
+          
+          {/* Scroll indicator */}
+          <div style={{
+            position: "sticky",
+            bottom: -23,
+            left: 0,
+            right: 0,
+            padding: "4px 12px",
+            background: "linear-gradient(to top, rgba(26, 43, 22, 0.9), transparent)",
+            color: "#888",
+            fontSize: 11,
+            textAlign: "center",
+            fontStyle: "italic",
+            pointerEvents: "none"
+          }}>
+            ⇅ Scroll for more info
           </div>
         </div>
       )}
