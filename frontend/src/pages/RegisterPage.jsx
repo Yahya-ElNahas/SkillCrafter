@@ -565,7 +565,7 @@ export default function RegisterPage() {
               margin: "0 0 16px 0",
               textShadow: "0 2px 8px rgba(0,0,0,0.6)"
             }}>
-              Complete Your Registration
+              Complete the Survey
             </h3>
             
             <p style={{
@@ -574,7 +574,7 @@ export default function RegisterPage() {
               lineHeight: 1.5,
               margin: "0 0 24px 0"
             }}>
-              The survey form has opened in a new window. Please complete it and then click the button below to enter the game.
+              The survey form has opened in a new window. Please submit it and then click the button below to enter the game.
             </p>
 
             <button
@@ -604,7 +604,7 @@ export default function RegisterPage() {
                 e.target.style.background = "linear-gradient(135deg, #ff6b35, #f7931e)";
               }}
             >
-              ✅ I've Completed the Survey
+              ✅ I've Submitted the Survey
             </button>
           </div>
         </div>
