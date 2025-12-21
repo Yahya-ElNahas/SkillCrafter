@@ -114,7 +114,8 @@ export default function ProblemPanel({
       {/* Victory panel */}
       {runResult && runResult.victoryMessage && (
         <div style={{
-          width: isFullScreen ? "auto" : "480px",
+          width: isFullScreen ? "800px" : "480px",
+          maxWidth: isFullScreen ? "90vw" : "none",
           maxHeight: isFullScreen ? "auto" : "80vh",
           transform: isFullScreen ? "translate(-50%, -50%)" : "translateY(20px)",
           position: isFullScreen ? "fixed" : "relative",
@@ -301,7 +302,7 @@ export default function ProblemPanel({
               fontStyle: "italic",
               fontWeight: 500,
             }}>
-              {runResult.victoryMessage}
+              {!isFullScreen ? runResult.victoryMessage : "You have solved the problem!"}
             </div>
           </div>
 
