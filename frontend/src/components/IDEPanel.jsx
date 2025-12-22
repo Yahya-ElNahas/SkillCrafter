@@ -94,7 +94,7 @@ export default function IDEPanel({
         </div>
 
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          {version != 2 && <button
+          {<button
             className="ide-help-button"
             style={{
               background: hintLoading ? "#666" : "linear-gradient(135deg, #ffc107 0%, #fd7e14 100%)",

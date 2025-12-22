@@ -66,8 +66,8 @@ export default function RegisterPage() {
       
       // Store the assigned version, open form, and show modal
       setUserVersion(body.user.version);
-      const formUrl = body.user.version === 3 
-        ? "https://docs.google.com/forms/d/e/1FAIpQLScc1gc0y54pA7yVPCIaEwXHGUUwfVjaERzpALiKMowlYvgbLQ/viewform?usp=publish-editor"
+      const formUrl = body.user.version === 2 
+        ? "https://docs.google.com/forms/d/e/1FAIpQLSeEEx-qyTs-IJicFNEZik36Jk2Bhmg7gR-VhsTTsLdbyA-rnw/viewform?usp=dialog"
         : "https://docs.google.com/forms/d/e/1FAIpQLSdusm6zA9Wxwox9-vuC2d7S2kJl9iIOglHFe-Lfe2Gj0dPr9g/viewform?usp=dialog";
       window.open(formUrl, '_blank');
       setShowFormModal(true);

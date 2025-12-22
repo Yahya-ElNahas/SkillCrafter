@@ -410,6 +410,10 @@ public class Solution {
                 battleAudioRef.current = null;
               }
             } catch (_) {}
+            // Mark problem as solved in availableProblems for version 2
+            if(version == 2) {
+              setAvailableProblems(prev => prev.map(p => p._id === battleData.problem._id ? {...p, solved: true} : p));
+            }
           } else {
             if (battleAudioRef.current) {
               battleAudioRef.current.play().catch(() => {});
@@ -991,7 +995,8 @@ public class Solution {
               </button>
               <button
                 onClick={() => {
-                  window.open('https://docs.google.com/forms/d/e/1FAIpQLSehGSpTM484xHcALbyUjERDfcHYvhaYVmhqFziVjr-zpYlBNw/viewform?usp=publish-editor', '_blank');
+                  if(version == 1) window.open('https://docs.google.com/forms/d/e/1FAIpQLSehGSpTM484xHcALbyUjERDfcHYvhaYVmhqFziVjr-zpYlBNw/viewform?usp=publish-editor', '_blank');
+                  else window.open('https://docs.google.com/forms/d/e/1FAIpQLSfS3OgP5J5iZpTiZZrpB0wRePnuo-LgfShiBkwIe5wGZF7IwA/viewform?usp=dialog', '_blank');
                   handleLogout();
                 }}
                 className="finish-button"
@@ -1261,6 +1266,21 @@ public class Solution {
               background: "rgba(0,0,0,0.66)", zIndex: 300000,
               display: "flex", alignItems: "center", justifyContent: "center"
             }}>
+              <style>
+                {`
+                  .problem-button:hover:not(:disabled) {
+                    transform: translateY(-2px) !important;
+                    box-shadow: 0 12px 28px rgba(0,0,0,0.5) !important;
+                    background: linear-gradient(135deg,#6f873b 0%,#5a712b 100%) !important;
+                  }
+                  .back-button:hover {
+                    transform: translateY(-1px) !important;
+                    box-shadow: 0 6px 16px rgba(0,0,0,0.3) !important;
+                    background: linear-gradient(135deg,rgba(255,255,255,0.08) 0%,rgba(255,255,255,0.04) 100%) !important;
+                    border-color: rgba(255,255,255,0.25) !important;
+                  }
+                `}
+              </style>
               <div style={{
                 background: "linear-gradient(180deg,#394b25 0%, #2c3a1c 100%)",
                 borderRadius: 16,
@@ -1295,21 +1315,25 @@ public class Solution {
                   {availableProblems.map(problem => (
                     <button
                       key={problem._id}
-                      onClick={() => handleProblemSelect(problem)}
+                      disabled={problem.solved}
+                      onClick={problem.solved ? undefined : () => handleProblemSelect(problem)}
+                      className="problem-button"
                       style={{
-                        padding: "12px 20px",
-                        borderRadius: 10,
-                        border: "1px solid rgba(0,0,0,0.25)",
-                        background: "linear-gradient(180deg,#5f773b,#4a612b)",
+                        padding: "16px 24px",
+                        borderRadius: 12,
+                        border: "2px solid rgba(255,255,255,0.1)",
+                        background: "linear-gradient(135deg,#5f773b 0%,#4a612b 100%)",
                         color: "#eef4d9",
                         fontWeight: "800",
-                        fontSize: 16,
-                        cursor: "pointer",
+                        fontSize: 18,
+                        cursor: problem.solved ? "not-allowed" : "pointer",
                         textAlign: "left",
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
-                        boxShadow: "0 6px 16px rgba(0,0,0,0.35)"
+                        boxShadow: "0 8px 20px rgba(0,0,0,0.4)",
+                        transition: "all 0.2s ease",
+                        opacity: problem.solved ? 0.5 : 1,
                       }}
                     >
                       <span>{problem.title} {problem.solved && <span style={{ color: "#4ade80", marginLeft: 8 }}>✓ Solved</span>}</span>
@@ -1320,20 +1344,26 @@ public class Solution {
 
                 <button
                   onClick={() => { setShowProblemList(false); setShowTopicSelect(true); }}
+                  className="back-button"
                   style={{
-                    marginTop: 18,
-                    padding: "10px 30px",
-                    borderRadius: 10,
-                    border: "1px solid rgba(255,255,255,0.04)",
-                    background: "transparent",
+                    marginTop: 20,
+                    padding: "14px 32px",
+                    borderRadius: 12,
+                    border: "2px solid rgba(255,255,255,0.15)",
+                    background: "linear-gradient(135deg,rgba(255,255,255,0.05) 0%,rgba(255,255,255,0.02) 100%)",
                     color: "#dfe7c8",
-                    fontWeight: "700",
-                    fontSize: 14,
+                    fontWeight: "800",
+                    fontSize: 16,
                     cursor: "pointer",
-                    boxShadow: "none"
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+                    transition: "all 0.2s ease",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px"
                   }}
                 >
-                  Back to Topics
+                  <span>⬅️</span>
+                  <span>Back to Topics</span>
                 </button>
               </div>
             </div>
